@@ -19,7 +19,6 @@ ROOT=src
 APP=$(ROOT)/app
 INCLUDE=$(ROOT)/include
 BIN=bin
-VULKAN_FRAMEWORKS=-framework Cocoa -framework OpenGL -framework IOKit -lglfw3
 
 # We need to choose between Windows and Mac.
 
@@ -36,6 +35,8 @@ ifeq ($(OS),Windows_NT)
 IFLAGS=-I $(INCLUDE) # Add include when resolved.
 else
 IFLAGS=-I $(INCLUDE) -I $(FMT_INCLUDE)
+LFLAGS=-lglfw3 -lvulkan
+FRAMEWORKS=-framework Cocoa -framework OpenGL -framework IOKit
 endif
 
 # Always the latest and greatest of the C++ standard.
@@ -69,7 +70,7 @@ endif
 # And we link all the objects files together including the libraries.
 
 $(TARGET): $(OBJS)
-	@$(CXX) $(CFLAGS) $(IFLAGS) $(LFLAGS) $(OBJS) -o $(BIN)/$(TARGET) $(VULKAN_FRAMEWORKS)
+	@$(CXX) $(CFLAGS) $(IFLAGS) $(FRAMEWORKS) $(LFLAGS) $(OBJS) -o $(BIN)/$(TARGET)
 
 # We include the headers definitions.
 

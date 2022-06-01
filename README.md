@@ -12,4 +12,5 @@ Enjoy :)
 
 ## Resources
 
-[The case of OpenGL, in C++, on M1 Mac](https://carette.xyz/posts/opengl_and_cpp_on_m1_mac/)
+[The Case of OpenGL, in C++, on M1 Mac](https://carette.xyz/posts/opengl_and_cpp_on_m1_mac)
+[Vulkan from Scratch](https://vulkan-tutorial.com/Drawing_a_triangle/Setup/Base_code)
