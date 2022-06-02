@@ -9,14 +9,14 @@
 #include <iostream>
 #include <vector>
 
+const uint32_t WIDTH = 800;
+const uint32_t HEIGHT = 600;
+
 class Triangle
 {
 private:
     GLFWwindow *window;
     VkInstance instance;
-
-    const uint32_t WIDTH = 800;
-    const uint32_t HEIGHT = 600;
 
     void initWindow()
     {
@@ -27,6 +27,7 @@ private:
 
         window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
     }
+
     void createInstance()
     {
         VkApplicationInfo appInfo{};
@@ -51,12 +52,12 @@ private:
 
         createInfo.enabledLayerCount = 0;
 
-        VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
-
-        if (result != VK_SUCCESS)
+        if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS)
         {
-            throw std::runtime_error("failed to create instance!");
+            throw std::runtime_error("Failed to create instance!");
         }
+
+        // Extensions (informative code).
 
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -65,17 +66,19 @@ private:
 
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-        std::cout << "available extensions:\n";
+        std::cout << "Available extensions:\n";
 
         for (const auto &extension : extensions)
         {
-            std::cout << '\t' << extension.extensionName << '\n';
+            std::cout << '\t' << extension.extensionName << " (v" << extension.specVersion << ")" << '\n';
         }
     }
+
     void initVulkan()
     {
         createInstance();
     }
+
     void mainLoop()
     {
         while (!glfwWindowShouldClose(window))
@@ -83,6 +86,7 @@ private:
             glfwPollEvents();
         }
     }
+
     void cleanup()
     {
         vkDestroyInstance(instance, nullptr);

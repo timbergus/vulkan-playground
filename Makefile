@@ -26,22 +26,23 @@ BIN=bin
 
 ifeq ($(OS),Windows_NT) # is Windows_NT on XP, 2000, 7, Vista, 10...
 FMT_INCLUDE=???
-GLFW=???
+GLM_INCLUDE=???
 else
 FMT_INCLUDE=/opt/homebrew/Cellar/fmt/8.1.1_1/include
+GLM_INCLUDE=/opt/homebrew/Cellar/glm/0.9.9.8/include
 endif
 
 ifeq ($(OS),Windows_NT)
 IFLAGS=-I $(INCLUDE) # Add include when resolved.
 else
-IFLAGS=-I $(INCLUDE) -I $(FMT_INCLUDE)
+IFLAGS=-I $(INCLUDE) -I $(FMT_INCLUDE) -I $(GLM_INCLUDE)
 LFLAGS=-lglfw3 -lvulkan
 FRAMEWORKS=-framework Cocoa -framework OpenGL -framework IOKit
 endif
 
 # Always the latest and greatest of the C++ standard.
 
-CFLAGS=-std=$(STD) -Werror -Wall -Wextra
+CFLAGS=-std=$(STD) -O2 -Werror -Wall -Wextra
 
 # We need a .o for every .cpp file.
 
