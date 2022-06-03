@@ -16,10 +16,10 @@ const uint32_t HEIGHT = 600;
 
 const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 
-#ifndef NDEBUG
-const bool enableValidationLayers = true;
-#else
+#ifdef NDEBUG
 const bool enableValidationLayers = false;
+#else
+const bool enableValidationLayers = true;
 #endif
 
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger)
@@ -119,6 +119,7 @@ private:
         vkDestroyInstance(instance, nullptr);
 
         glfwDestroyWindow(window);
+
         glfwTerminate();
     }
 
@@ -233,13 +234,7 @@ private:
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
-        VkDeviceQueueCreateInfo queueCreateInfo{};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-        queueCreateInfo.queueCount = 1;
-
         float queuePriority = 1.0f;
-
         for (uint32_t queueFamily : uniqueQueueFamilies)
         {
             VkDeviceQueueCreateInfo queueCreateInfo{};
@@ -254,9 +249,12 @@ private:
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
+
         createInfo.pEnabledFeatures = &deviceFeatures;
+
         createInfo.enabledExtensionCount = 0;
 
         if (enableValidationLayers)
@@ -332,7 +330,6 @@ private:
     {
         uint32_t glfwExtensionCount = 0;
         const char **glfwExtensions;
-
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
         std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
@@ -340,7 +337,6 @@ private:
         if (enableValidationLayers)
         {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-            extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
         }
 
         return extensions;
@@ -348,7 +344,7 @@ private:
 
     bool checkValidationLayerSupport()
     {
-        uint32_t layerCount = 0;
+        uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
         std::vector<VkLayerProperties> availableLayers(layerCount);
