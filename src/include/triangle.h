@@ -6,12 +6,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#undef arm64
-#undef arm
-
 #include <iostream>
 #include <vector>
-#include <map>
 #include <optional>
 #include <set>
 
@@ -149,18 +145,10 @@ private:
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
-        uint32_t glfwExtensionCount = 0;
-        const char **glfwExtensions;
-
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-        createInfo.enabledExtensionCount = glfwExtensionCount;
-        createInfo.ppEnabledExtensionNames = glfwExtensions;
-
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
         if (enableValidationLayers)
         {
-            createInfo.enabledExtensionCount = static_cast<u_int32_t>(validationLayers.size());
+            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             createInfo.ppEnabledLayerNames = validationLayers.data();
 
             populateDebugMessengerCreateInfo(debugCreateInfo);
@@ -222,8 +210,6 @@ private:
 
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-
-        std::multimap<int, VkPhysicalDevice> candidates;
 
         for (const auto &device : devices)
         {
@@ -292,7 +278,7 @@ private:
         vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
     }
 
-    int isDeviceSuitable(VkPhysicalDevice device)
+    bool isDeviceSuitable(VkPhysicalDevice device)
     {
         VkPhysicalDeviceProperties deviceProperties;
         vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -302,8 +288,7 @@ private:
 
         QueueFamilyIndices indices = findQueueFamilies(device);
 
-        return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU &&
-               !deviceFeatures.geometryShader && indices.isComplete();
+        return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && !deviceFeatures.geometryShader && indices.isComplete();
     }
 
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
@@ -397,7 +382,6 @@ private:
         const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
         __unused void *pUserData)
     {
-
         std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
         return VK_FALSE;
